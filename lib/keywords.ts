@@ -1,0 +1,22 @@
+export const SEARCH_KEYWORDS = [
+  "oversharing",
+  "burnout",
+  "mentally unstable",
+  "depressed af",
+  "dissociating",
+  "emotional damage",
+  "dark humor",
+  "queer chaos",
+  "panic spiral",
+  "emotional support",
+  "sleep deprived",
+  "too self aware",
+  "chronically online",
+  "gay panic",
+  "overthinker",
+  "identity crisis",
+  "tired of existing",
+  "socially awkward",
+  "trauma response",
+  "mentally ill meme"
+];
