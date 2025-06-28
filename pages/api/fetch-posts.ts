@@ -6,6 +6,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { fetchAndProcessPosts } from "@/pages/api/postPipeline";
 import { logger } from "@/lib/logger";
+import fs from "fs";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,6 +21,18 @@ export default async function handler(
     "[fetch-posts] ETSY_SHOP_ID:",
     process.env.ETSY_SHOP_ID ? "set" : "NOT SET"
   );
+  console.log(
+    "[fetch-posts] OPENAI_API_KEY:",
+    process.env.OPENAI_API_KEY ? "set" : "NOT SET"
+  );
+
+  // Check if /tmp is writable (Vercel's only writable dir)
+  try {
+    fs.writeFileSync("/tmp/test.txt", "test");
+    console.log("[fetch-posts] /tmp is writable");
+  } catch (e) {
+    console.error("[fetch-posts] /tmp is NOT writable", e);
+  }
 
   if (req.method !== "POST") {
     console.log("[fetch-posts] 405 Method Not Allowed");
@@ -28,7 +41,7 @@ export default async function handler(
 
   try {
     const result = await fetchAndProcessPosts();
-    console.log("[fetch-posts] Success:", result);
+    console.log("[fetch-posts] Success, result:", result);
     res.status(200).json({
       message: "Posts pulled, filtered, ranked, and saved successfully",
       ...result,
