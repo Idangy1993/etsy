@@ -25,7 +25,10 @@ export const API_CONFIG = {
 
 // File paths
 export const FILE_PATHS = {
-  FOUND_POSTS: "data/foundPosts.json",
+  FOUND_POSTS:
+    process.env.NODE_ENV === "production"
+      ? "/tmp/foundPosts.json"
+      : "data/foundPosts.json",
   GPT_FILTER_DEBUG: "data/gptFilterDebug.json",
   REDDIT_REPLIES: "data/redditReplies.json",
 } as const;
