@@ -26,7 +26,7 @@ export async function fetchAndProcessPosts() {
       limit: API_CONFIG.REDDIT.SEARCH_LIMIT,
     });
 
-    const posts = results.map((post) => ({
+    const posts = results.map((post: any) => ({
       keyword,
       title: post.title,
       url: `https://reddit.com${post.permalink}`,
