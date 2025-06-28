@@ -5,4 +5,4 @@ export type Post = {
   subreddit: string;
   reply?: string;
 };
- 
+  
