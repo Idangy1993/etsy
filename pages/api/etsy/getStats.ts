@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const token = process.env.ETSY_ACCESS_TOKEN!;
+  const token = process.env.ETSY_API_TOKEN!;
   const shopId = process.env.ETSY_SHOP_ID!;
 
   if (!token) {

@@ -1,16 +1,15 @@
-export async function getActiveListings(shopId: string, token: string) {
+export async function getActiveListings(shopId: string, apiKey: string) {
   const res = await fetch(
     `https://openapi.etsy.com/v3/application/shops/${shopId}/listings/active`,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        "x-api-key": apiKey,
         "Content-Type": "application/json",
       },
     }
   );
 
   if (!res.ok) {
-    console.error("Failed to fetch listings:", await res.text());
     throw new Error("Etsy API error");
   }
 
