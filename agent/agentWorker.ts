@@ -5,7 +5,7 @@ import { agentOrchestrator } from "../services/agentOrchestrator";
 async function main() {
   console.log("Agent started at", new Date().toISOString());
   try {
-    const result = await agentOrchestrator();
+    const result = await agentOrchestrator(); 
     console.log("Agent run result:", result);
   } catch (err) {
     console.error("Agent error:", err);
