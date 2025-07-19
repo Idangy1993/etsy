@@ -67,17 +67,12 @@ export async function fetchAndProcessPosts() {
   logger.info(`Top ranked posts selected: ${topRanked.length}`);
 
   // Save results
-  console.log(`[fetch-posts] Writing posts to: ${FILE_PATHS.FOUND_POSTS}`);
-  const success = writeJsonFile(FILE_PATHS.FOUND_POSTS, topRanked);
-  logger.info(`writeJsonFile result: ${success}`);
-  if (!success) {
-    throw new Error("Failed to save posts to file");
-  }
-
+  // No file writing, just return topRanked for DB insert
   return {
     total: allPosts.length,
     basicFiltered: basicFiltered.length,
     gptFiltered: gptFiltered.length,
     final: topRanked.length,
+    topRanked,
   };
 }

@@ -23,15 +23,7 @@ export const API_CONFIG = {
   },
 } as const;
 
-// File paths
-export const FILE_PATHS = {
-  FOUND_POSTS:
-    process.env.NODE_ENV === "production"
-      ? "/tmp/foundPosts.json"
-      : "data/foundPosts.json",
-  GPT_FILTER_DEBUG: "data/gptFilterDebug.json",
-  REDDIT_REPLIES: "data/redditReplies.json",
-} as const;
+// File paths are no longer needed for posts/replies, handled by DB
 
 // Validation constants
 export const VALIDATION = {

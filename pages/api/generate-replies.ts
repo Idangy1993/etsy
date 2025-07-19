@@ -1,33 +1,37 @@
 // pages/api/generate-replies.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/lib/supabaseClient";
 import type { RedditPost } from "@/lib/filterPosts";
 import { generateRepliesForPosts } from "@/lib/gptReplyGenerator";
-import { FILE_PATHS } from "@/lib/constants";
 
 export default async function handler(
   _req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const filePath = FILE_PATHS.FOUND_POSTS;
-    const raw = fs.readFileSync(filePath, "utf8");
-    const posts: RedditPost[] = JSON.parse(raw);
-
+    // Fetch posts from DB
+    const { data: posts, error } = await supabase
+      .from("reddit_posts")
+      .select("*");
+    if (error) throw error;
+    if (!posts || posts.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No posts to generate replies for", count: 0 });
+    }
     const replies = await generateRepliesForPosts(posts);
-
-    const updated = posts.map((post, i) => ({
-      ...post,
-      reply: replies[i] || "",
-    }));
-
-    fs.writeFileSync(filePath, JSON.stringify(updated, null, 2));
-
-    res.status(200).json({
-      message: "Replies generated and saved successfully",
-      count: updated.length,
-    });
+    // Update each post with its reply
+    for (let i = 0; i < posts.length; i++) {
+      const post = posts[i];
+      const reply = replies[i] || "";
+      await supabase.from("reddit_posts").update({ reply }).eq("id", post.id);
+    }
+    res
+      .status(200)
+      .json({
+        message: "Replies generated and saved successfully",
+        count: posts.length,
+      });
   } catch (err) {
     console.error("❌ Failed to generate replies:", err);
     res.status(500).json({

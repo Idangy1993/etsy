@@ -6,36 +6,7 @@ import fs from "fs";
 import path from "path";
 import { FILE_PATHS } from "./constants";
 
-/**
- * Safely read JSON file with error handling
- */
-export function readJsonFile<T>(filePath: string): T | null {
-  try {
-    const fullPath = path.isAbsolute(filePath)
-      ? filePath
-      : path.join(process.cwd(), filePath);
-    const fileContent = fs.readFileSync(fullPath, "utf8");
-    return JSON.parse(fileContent);
-  } catch (error) {
-    return null;
-  }
-}
-
-/**
- * Safely write JSON file with error handling
- */
-export function writeJsonFile<T>(filePath: string, data: T): boolean {
-  try {
-    const fullPath = path.isAbsolute(filePath)
-      ? filePath
-      : path.join(process.cwd(), filePath);
-    fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
-    return true;
-  } catch (error) {
-    console.error("[writeJsonFile] Error writing file:", filePath, error);
-    return false;
-  }
-}
+// Remove readJsonFile and writeJsonFile, now using DB for posts/replies
 
 /**
  * Validate required environment variables

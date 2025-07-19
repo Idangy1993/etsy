@@ -6,7 +6,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { fetchAndProcessPosts } from "@/pages/api/postPipeline";
 import { logger } from "@/lib/logger";
-import fs from "fs";
+import { supabase } from "@/lib/supabaseClient";
 import { validateEnvVars } from "@/lib/serverUtils";
 
 export default async function handler(
@@ -43,13 +43,6 @@ export default async function handler(
   if (!process.env.OPENAI_API_KEY) {
     console.error("[fetch-posts] MISSING OpenAI env var: OPENAI_API_KEY");
   }
-  // Check if /tmp is writable (Vercel's only writable dir)
-  try {
-    fs.writeFileSync("/tmp/test.txt", "test");
-    console.log("[fetch-posts] /tmp is writable");
-  } catch (e) {
-    console.error("[fetch-posts] /tmp is NOT writable", e);
-  }
   if (req.method !== "POST") {
     console.log("[fetch-posts] 405 Method Not Allowed");
     return res.status(405).json({ error: "Method not allowed" });
@@ -57,6 +50,14 @@ export default async function handler(
   try {
     console.log("[fetch-posts] Starting fetchAndProcessPosts");
     const result = await fetchAndProcessPosts();
+    // Save posts to DB
+    if (result && result.topRanked) {
+      const { error } = await supabase
+        .from("reddit_posts")
+        .insert(result.topRanked);
+      if (error)
+        throw new Error("Failed to save posts to DB: " + error.message);
+    }
     console.log("[fetch-posts] Success, result:", result);
     res.status(200).json({
       message: "Posts pulled, filtered, ranked, and saved successfully",

@@ -7,8 +7,7 @@ import type { RedditPost } from "./filterPosts";
 import { ChatCompletionMessageParam } from "openai/resources/chat";
 import { logger } from "./logger";
 import { createOpenAIClient } from "./serverUtils";
-import { API_CONFIG, FILE_PATHS } from "./constants";
-import { writeJsonFile } from "./serverUtils";
+import { API_CONFIG } from "./constants";
 
 const SYSTEM_PROMPT = `
 You are the content filter agent for a chaotic Etsy brand called Straight Backwards.
@@ -106,9 +105,7 @@ ${post.content || "(no content)"}
   }
 
   // Save debug info in development only
-  if (process.env.NODE_ENV === "development") {
-    writeJsonFile(FILE_PATHS.GPT_FILTER_DEBUG, debug);
-  }
+  // (removed file writing, now using DB for all storage)
 
   logger.info(
     `GPT filtering complete: ${accepted.length}/${posts.length} posts accepted`

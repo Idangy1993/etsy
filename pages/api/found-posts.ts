@@ -4,8 +4,7 @@
  */
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { readJsonFile } from "@/lib/serverUtils";
-import { FILE_PATHS } from "@/lib/constants";
+import { supabase } from "@/lib/supabaseClient";
 import { logger } from "@/lib/logger";
 
 export default async function handler(
@@ -13,15 +12,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const data = readJsonFile(FILE_PATHS.FOUND_POSTS);
-
-    if (!data) {
-      return res.status(200).json([]);
+    const { data, error } = await supabase
+      .from("reddit_posts")
+      .select("*")
+      .order("created_utc", { ascending: false });
+    if (error) {
+      return res.status(500).json({ error: error.message });
     }
-
-    res.status(200).json(data);
+    res.status(200).json(data || []);
   } catch (error) {
     logger.error("Failed to read found posts", error);
-    res.status(500).json({ error: "Could not read found posts file" });
+    res.status(500).json({ error: "Could not read found posts from DB" });
   }
 }
