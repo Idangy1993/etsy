@@ -4,13 +4,14 @@ import fs from "fs";
 import path from "path";
 import type { RedditPost } from "@/lib/filterPosts";
 import { generateRepliesForPosts } from "@/lib/gptReplyGenerator";
+import { FILE_PATHS } from "@/lib/constants";
 
 export default async function handler(
   _req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const filePath = path.join(process.cwd(), "data", "foundPosts.json");
+    const filePath = FILE_PATHS.FOUND_POSTS;
     const raw = fs.readFileSync(filePath, "utf8");
     const posts: RedditPost[] = JSON.parse(raw);
 

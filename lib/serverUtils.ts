@@ -11,7 +11,9 @@ import { FILE_PATHS } from "./constants";
  */
 export function readJsonFile<T>(filePath: string): T | null {
   try {
-    const fullPath = path.join(process.cwd(), filePath);
+    const fullPath = path.isAbsolute(filePath)
+      ? filePath
+      : path.join(process.cwd(), filePath);
     const fileContent = fs.readFileSync(fullPath, "utf8");
     return JSON.parse(fileContent);
   } catch (error) {
@@ -24,7 +26,9 @@ export function readJsonFile<T>(filePath: string): T | null {
  */
 export function writeJsonFile<T>(filePath: string, data: T): boolean {
   try {
-    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+    const fullPath = path.isAbsolute(filePath)
+      ? filePath
+      : path.join(process.cwd(), filePath);
     fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
     return true;
   } catch (error) {
