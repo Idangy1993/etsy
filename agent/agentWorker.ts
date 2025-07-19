@@ -1,3 +1,4 @@
+console.log("=== Agent worker started (deploy test) ===");
 import cron from "node-cron";
 import { agentOrchestrator } from "../services/agentOrchestrator";
 
@@ -16,4 +17,3 @@ cron.schedule("*/5 * * * *", main);
 
 // Run once on start
 main();
-   
