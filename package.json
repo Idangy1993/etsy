@@ -1,7 +1,7 @@
 {
   "name": "etsy",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,12 +11,12 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.52.0",
     "next": "^14.0.4",
-    "node-cron": "^3.0.3",
+    "node-cron": "^3.0.2",
+    "ts-node": "^10.0.0",
     "openai": "^5.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "snoowrap": "^1.23.0",
-    "type": "module"
+    "snoowrap": "^1.23.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
