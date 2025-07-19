@@ -67,6 +67,7 @@ export async function fetchAndProcessPosts() {
   logger.info(`Top ranked posts selected: ${topRanked.length}`);
 
   // Save results
+  logger.info(`Writing posts to: ${FILE_PATHS.FOUND_POSTS}`);
   const success = writeJsonFile(FILE_PATHS.FOUND_POSTS, topRanked);
   logger.info(`writeJsonFile result: ${success}`);
   if (!success) {
