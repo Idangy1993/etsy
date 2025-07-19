@@ -4,9 +4,8 @@
  */
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { fetchAndProcessPosts } from "@/pages/api/postPipeline";
+import { fetchPostsService } from "@/services/fetchPostsService";
 import { logger } from "@/lib/logger";
-import { supabase } from "@/lib/supabaseClient";
 import { validateEnvVars } from "@/lib/serverUtils";
 
 export default async function handler(
@@ -48,43 +47,10 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
   try {
-    console.log("[fetch-posts] Starting fetchAndProcessPosts");
-    const result = await fetchAndProcessPosts();
-    // Generate a new batch_id (timestamp)
-    const batchId = Date.now().toString();
-    // Get all existing post URLs
-    const { data: existingPosts, error: fetchError } = await supabase
-      .from("reddit_posts")
-      .select("url");
-    if (fetchError)
-      throw new Error("Failed to fetch existing posts: " + fetchError.message);
-    const existingUrls = new Set((existingPosts || []).map((p: any) => p.url));
-    // Filter out posts with URLs already in the DB
-    const newPosts = (result.topRanked || []).filter(
-      (post: any) => !existingUrls.has(post.url)
-    );
-    // Add batch_id to each new post
-    const postsToInsert = newPosts.map((post: any) => ({
-      ...post,
-      batch_id: batchId,
-    }));
-    // Insert new posts for this batch
-    if (postsToInsert.length > 0) {
-      const { error } = await supabase
-        .from("reddit_posts")
-        .insert(postsToInsert);
-      if (error)
-        throw new Error("Failed to save posts to DB: " + error.message);
-    }
-    console.log("[fetch-posts] Success, result:", {
-      ...result,
-      inserted: postsToInsert.length,
-    });
+    const result = await fetchPostsService();
     res.status(200).json({
       message: "Posts pulled, filtered, ranked, and saved successfully",
       ...result,
-      inserted: postsToInsert.length,
-      batch_id: batchId,
     });
   } catch (error) {
     logger.error("Reddit API error", error);
