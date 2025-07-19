@@ -124,7 +124,7 @@ Drop messy, unfinished, glitchy posts that feel like emotional accidents.
 - Metaphors, reflections, or tidy phrasing
 - Anything that feels edited or planned
 
-✅ Use:
+✅ Use: 
 - Fragments
 - Sentence repetition
 - Specific sensory snapshots (what tired *looks* like)
