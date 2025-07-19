@@ -5,6 +5,7 @@ import Snoowrap from "snoowrap";
 import { SEARCH_KEYWORDS } from "@/lib/keywords";
 import { filterRedditPosts } from "@/lib/filterPosts";
 import { filterWithGPT } from "@/lib/gptFilter";
+import { FILE_PATHS } from "@/lib/constants";
 
 const reddit = new Snoowrap({
   userAgent: "straight-backwards-agent",
@@ -52,7 +53,7 @@ export default async function handler(
     const gptFiltered = await filterWithGPT(filteredPosts);
     console.log(`🧠 GPT accepted ${gptFiltered.length} posts`);
 
-    const filePath = path.join(process.cwd(), "data", "foundPosts.json");
+    const filePath = FILE_PATHS.FOUND_POSTS;
     fs.writeFileSync(filePath, JSON.stringify(gptFiltered, null, 2));
 
     res.status(200).json({
@@ -62,9 +63,9 @@ export default async function handler(
       afterGPTFilter: gptFiltered.length,
     });
   } catch (err: unknown) {
-    console.error("❌ Reddit API error:", err);
+    console.error("❌ Failed to fetch and filter posts:", err);
     res.status(500).json({
-      error: err instanceof Error ? err.message : "An unknown error occurred",
+      error: err instanceof Error ? err.message : "Unknown error",
     });
   }
 }
