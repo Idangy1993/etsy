@@ -1,6 +1,8 @@
-console.log("=== Agent worker started (deploy test) ===");
 /* eslint-disable @typescript-eslint/no-var-requires */
+console.log("=== Agent worker started (deploy test) ===");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const cron = require("node-cron");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { agentOrchestrator } = require("../services/agentOrchestrator");
 
 async function main() {
