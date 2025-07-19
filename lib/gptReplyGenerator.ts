@@ -54,7 +54,7 @@ Good reply:
 
 👎 Do NOT explain. Do NOT reflect. Just punch and run.
 
-💬 Output:
+💬 Output:  
 Just the reply.  
 No headers. No formatting. No markdown. No explanations.  
 Make it sound like a broken human with decent WiFi and bad coping skills.
