@@ -14,30 +14,44 @@ import { API_CONFIG } from "@/lib/constants";
 import { logger } from "@/lib/logger";
 
 export async function fetchAndProcessPosts() {
-  const reddit = createRedditClient();
+  let reddit;
+  try {
+    reddit = createRedditClient();
+    logger.info("Reddit client created successfully");
+  } catch (err) {
+    logger.error("Failed to create Reddit client", err);
+    throw err;
+  }
   const allPosts = [];
 
   // Fetch posts for each keyword
   for (const keyword of SEARCH_KEYWORDS) {
-    const results = await reddit.search({
-      query: keyword,
-      sort: API_CONFIG.REDDIT.SEARCH_SORT,
-      time: API_CONFIG.REDDIT.SEARCH_TIME,
-      limit: API_CONFIG.REDDIT.SEARCH_LIMIT,
-    });
-
-    const posts = results.map((post: any) => ({
-      keyword,
-      title: post.title,
-      url: `https://reddit.com${post.permalink}`,
-      subreddit: post.subreddit_name_prefixed,
-      content: post.selftext,
-      upvotes: post.ups,
-      created_utc: post.created_utc,
-    }));
-
-    logger.info(`Pulled ${posts.length} posts for keyword`, { keyword });
-    allPosts.push(...posts);
+    try {
+      logger.info(`Searching Reddit for keyword: ${keyword}`);
+      const results = await reddit.search({
+        query: keyword,
+        sort: API_CONFIG.REDDIT.SEARCH_SORT,
+        time: API_CONFIG.REDDIT.SEARCH_TIME,
+        limit: API_CONFIG.REDDIT.SEARCH_LIMIT,
+      });
+      logger.info(
+        `Reddit search returned ${results.length} results for keyword: ${keyword}`
+      );
+      const posts = results.map((post: any) => ({
+        keyword,
+        title: post.title,
+        url: `https://reddit.com${post.permalink}`,
+        subreddit: post.subreddit_name_prefixed,
+        content: post.selftext,
+        upvotes: post.ups,
+        created_utc: post.created_utc,
+      }));
+      logger.info(`Pulled ${posts.length} posts for keyword`, { keyword });
+      allPosts.push(...posts);
+    } catch (err) {
+      logger.error(`Reddit search failed for keyword: ${keyword}`, err);
+      throw err;
+    }
   }
 
   logger.info(`Total posts pulled from Reddit: ${allPosts.length}`);
@@ -54,6 +68,7 @@ export async function fetchAndProcessPosts() {
 
   // Save results
   const success = writeJsonFile(FILE_PATHS.FOUND_POSTS, topRanked);
+  logger.info(`writeJsonFile result: ${success}`);
   if (!success) {
     throw new Error("Failed to save posts to file");
   }
