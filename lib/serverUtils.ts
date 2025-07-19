@@ -4,7 +4,7 @@
 
 import fs from "fs";
 import path from "path";
-import { FILE_PATHS } from "./constants";
+// Removed: import { FILE_PATHS } from "./constants";
 
 // Remove readJsonFile and writeJsonFile, now using DB for posts/replies
 

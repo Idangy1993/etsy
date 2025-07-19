@@ -5,7 +5,7 @@ import Snoowrap from "snoowrap";
 import { SEARCH_KEYWORDS } from "@/lib/keywords";
 import { filterRedditPosts } from "@/lib/filterPosts";
 import { filterWithGPT } from "@/lib/gptFilter";
-import { FILE_PATHS } from "@/lib/constants";
+// Removed: import { FILE_PATHS } from "@/lib/constants";
 
 const reddit = new Snoowrap({
   userAgent: "straight-backwards-agent",
@@ -53,16 +53,17 @@ export default async function handler(
     const gptFiltered = await filterWithGPT(filteredPosts);
     console.log(`🧠 GPT accepted ${gptFiltered.length} posts`);
 
-    const filePath = FILE_PATHS.FOUND_POSTS;
-    fs.writeFileSync(filePath, JSON.stringify(gptFiltered, null, 2));
+    // DB logic should be used here for saving posts, not file logic
+    // (If you want to save to DB, import supabase and insert here)
 
     res.status(200).json({
-      message: "Posts saved successfully",
+      message: "Posts processed successfully",
       pulled: allPosts.length,
       afterBasicFilter: filteredPosts.length,
       afterGPTFilter: gptFiltered.length,
+      posts: gptFiltered,
     });
-  } catch (err: unknown) {
+  } catch (err) {
     console.error("❌ Failed to fetch and filter posts:", err);
     res.status(500).json({
       error: err instanceof Error ? err.message : "Unknown error",

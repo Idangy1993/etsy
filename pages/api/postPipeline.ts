@@ -8,8 +8,6 @@ import { filterRedditPosts } from "@/lib/filterPosts";
 import { filterWithGPT } from "@/lib/gptFilter";
 import { rankPostsForTrafficPotential } from "@/lib/rankPostsForTrafficPotential";
 import { createRedditClient } from "@/lib/serverUtils";
-import { writeJsonFile } from "@/lib/serverUtils";
-import { FILE_PATHS } from "@/lib/constants";
 import { API_CONFIG } from "@/lib/constants";
 import { logger } from "@/lib/logger";
 
