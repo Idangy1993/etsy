@@ -167,27 +167,40 @@ export default function CreatePost() {
                 Select Subreddit
               </h3>
               <div className="space-y-2">
-                {SUBREDDITS.map((subreddit) => (
-                  <div
-                    key={subreddit}
-                    onClick={() => handleSubredditClick(subreddit)}
-                    className={`p-3 rounded-lg border transition-colors cursor-pointer group ${
-                      selectedSubreddit === subreddit
-                        ? "bg-blue-500/20 border-blue-500/50"
-                        : "bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50"
-                    }`}
-                  >
-                    <span
-                      className={`font-medium transition-colors ${
-                        selectedSubreddit === subreddit
-                          ? "text-blue-400"
-                          : "text-slate-300 group-hover:text-white"
+                {SUBREDDITS.map((subreddit) => {
+                  const isProfileOrOffMyChest = subreddit === "Profile" || subreddit === "r/OffMyChest";
+                  const isSelected = selectedSubreddit === subreddit;
+                  
+                  return (
+                    <div
+                      key={subreddit}
+                      onClick={() => handleSubredditClick(subreddit)}
+                      className={`p-3 rounded-lg border transition-colors cursor-pointer group ${
+                        isSelected
+                          ? isProfileOrOffMyChest
+                            ? "bg-emerald-500/20 border-emerald-500/50"
+                            : "bg-blue-500/20 border-blue-500/50"
+                          : isProfileOrOffMyChest
+                            ? "bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20"
+                            : "bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50"
                       }`}
                     >
-                      {subreddit}
-                    </span>
-                  </div>
-                ))}
+                      <span
+                        className={`font-medium transition-colors ${
+                          isSelected
+                            ? isProfileOrOffMyChest
+                              ? "text-emerald-400"
+                              : "text-blue-400"
+                            : isProfileOrOffMyChest
+                              ? "text-emerald-300 group-hover:text-emerald-400"
+                              : "text-slate-300 group-hover:text-white"
+                        }`}
+                      >
+                        {subreddit}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
               <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                 <p className="text-blue-400 text-sm">

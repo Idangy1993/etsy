@@ -8,8 +8,20 @@ type Post = {
   content: string;
   url: string;
   subreddit: string;
+  upvotes?: number;
+  created_utc?: number;
   reply?: string;
 };
+
+function timeAgo(utcSeconds?: number): string {
+  if (!utcSeconds) return "";
+  const now = Date.now() / 1000;
+  const diff = Math.floor(now - utcSeconds);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
 
 export default function RedditPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -134,7 +146,12 @@ export default function RedditPage() {
                     {post.title}
                   </h3>
                   <p className="text-sm text-slate-400 mt-1">
-                    r/{post.subreddit} • {expanded === index ? "▼" : "▶"}
+                    r/{post.subreddit} •{" "}
+                    {typeof post.upvotes === "number"
+                      ? `${post.upvotes} upvotes • `
+                      : ""}
+                    {post.created_utc ? `${timeAgo(post.created_utc)} • ` : ""}
+                    {expanded === index ? "▼" : "▶"}
                   </p>
                 </button>
 
@@ -170,7 +187,9 @@ export default function RedditPage() {
                         </Button>
                       )}
                       {post.reply && copiedIndex === index && (
-                        <span className="ml-2 text-emerald-400 text-xs font-semibold animate-fade-in">Copied!</span>
+                        <span className="ml-2 text-emerald-400 text-xs font-semibold animate-fade-in">
+                          Copied!
+                        </span>
                       )}
                     </div>
 

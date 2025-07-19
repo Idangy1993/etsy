@@ -6,7 +6,7 @@
 export const API_CONFIG = {
   REDDIT: {
     USER_AGENT: "straight-backwards-agent",
-    SEARCH_LIMIT: 5,
+    SEARCH_LIMIT: 7,
     SEARCH_TIME: "year" as const,
     SEARCH_SORT: "new" as const,
   },

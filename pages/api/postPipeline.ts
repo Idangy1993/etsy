@@ -33,6 +33,7 @@ export async function fetchAndProcessPosts() {
       subreddit: post.subreddit_name_prefixed,
       content: post.selftext,
       upvotes: post.ups,
+      created_utc: post.created_utc,
     }));
 
     logger.info(`Pulled ${posts.length} posts for keyword`, { keyword });
