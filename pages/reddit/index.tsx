@@ -26,10 +26,8 @@ function timeAgo(utcSeconds?: number): string {
 export default function RedditPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [loadingReplies, setLoadingReplies] = useState(false);
-  const [replyStatus, setReplyStatus] = useState("");
-  const [fetchingPosts, setFetchingPosts] = useState(false);
-  const [fetchStatus, setFetchStatus] = useState("");
+  const [agentLoading, setAgentLoading] = useState(false);
+  const [agentStatus, setAgentStatus] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const fetchPosts = useCallback(async () => {
@@ -42,36 +40,24 @@ export default function RedditPage() {
     fetchPosts();
   }, [fetchPosts]);
 
-  const handleGenerateReplies = async () => {
-    setLoadingReplies(true);
-    setReplyStatus("Generating replies...");
+  const handleAgentOrchestrator = async () => {
+    setAgentLoading(true);
+    setAgentStatus(
+      "Running agent orchestrator (fetching posts and generating replies)..."
+    );
     try {
-      const res = await fetch("/api/generate-replies", { method: "POST" });
+      const res = await fetch("/api/agent-trigger", { method: "POST" });
       const result = await res.json();
-      setReplyStatus(
-        result.message
-          ? `✅ ${result.message}`
-          : "✅ Replies generated successfully"
+      setAgentStatus(
+        result.fetchResult && result.replyResult
+          ? "✅ Posts and replies generated successfully"
+          : "✅ Agent ran, check logs for details"
       );
       await fetchPosts();
     } catch {
-      setReplyStatus("❌ Failed to generate replies.");
+      setAgentStatus("❌ Failed to run agent orchestrator.");
     }
-    setLoadingReplies(false);
-  };
-
-  const handleFetchAndFilterPosts = async () => {
-    setFetchingPosts(true);
-    setFetchStatus("🔄 Fetching and filtering Reddit posts...");
-    try {
-      const res = await fetch("/api/fetch-posts", { method: "POST" });
-      const result = await res.json();
-      setFetchStatus(`✅ ${result.message}`);
-      await fetchPosts();
-    } catch {
-      setFetchStatus("❌ Failed to fetch posts.");
-    }
-    setFetchingPosts(false);
+    setAgentLoading(false);
   };
 
   return (
@@ -89,14 +75,13 @@ export default function RedditPage() {
         <Card className="mb-8">
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <Button
-              onClick={handleFetchAndFilterPosts}
-              loading={fetchingPosts}
+              onClick={handleAgentOrchestrator}
+              loading={agentLoading}
               className="flex-1"
               size="lg"
             >
-              🔍 Fetch & Rank Posts
+              🤖 Fetch Posts & Generate Replies
             </Button>
-
             <Link href="/reddit/create-post" className="flex-1">
               <Button variant="secondary" className="w-full" size="lg">
                 ✨ Generate Post
@@ -104,28 +89,11 @@ export default function RedditPage() {
             </Link>
           </div>
 
-          {fetchStatus && (
+          {agentStatus && (
             <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
-              <p className="text-slate-300">{fetchStatus}</p>
+              <p className="text-slate-300">{agentStatus}</p>
             </div>
           )}
-
-          <div className="mt-6">
-            <Button
-              onClick={handleGenerateReplies}
-              loading={loadingReplies}
-              className="w-full"
-              size="lg"
-            >
-              💬 Generate Replies
-            </Button>
-
-            {replyStatus && (
-              <div className="mt-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
-                <p className="text-slate-300">{replyStatus}</p>
-              </div>
-            )}
-          </div>
         </Card>
 
         <div className="space-y-6">
