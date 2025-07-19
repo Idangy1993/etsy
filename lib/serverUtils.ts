@@ -24,7 +24,7 @@ export function readJsonFile<T>(filePath: string): T | null {
  */
 export function writeJsonFile<T>(filePath: string, data: T): boolean {
   try {
-    const fullPath = path.join(process.cwd(), filePath);
+    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
     fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
     return true;
   } catch (error) {
