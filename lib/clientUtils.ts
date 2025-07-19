@@ -23,3 +23,4 @@ export function cleanTextForSearch(text: string): string {
     .replace(/[^\w\s]/g, "")
     .trim();
 }
+ 
