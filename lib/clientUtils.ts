@@ -22,5 +22,5 @@ export function cleanTextForSearch(text: string): string {
     .replace(/\s+/g, " ")
     .replace(/[^\w\s]/g, "")
     .trim();
-}
+}  
  
