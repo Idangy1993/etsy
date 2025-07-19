@@ -131,7 +131,7 @@ Drop messy, unfinished, glitchy posts that feel like emotional accidents.
 - Posts that trail off or stop mid-thought
 - Thoughts that contradict each other
 - Chaotic whitespace and awkward breaks
-
+ 
 🏁 Rule of thumb:
 If it starts to make sense — stop.
 
