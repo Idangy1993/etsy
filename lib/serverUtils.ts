@@ -28,6 +28,7 @@ export function writeJsonFile<T>(filePath: string, data: T): boolean {
     fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
     return true;
   } catch (error) {
+    console.error("[writeJsonFile] Error writing file:", filePath, error);
     return false;
   }
 }
