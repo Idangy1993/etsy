@@ -137,7 +137,7 @@ If it starts to make sense — stop.
 
 📌 Example titles:
 - “nothing feels real and i’m still pretending”
-- “i’m so tired it feels like static”
+- “i’m so tired it feels like static” 
 - “why am i still performing like this matters”
 - “this isn’t healing. it’s malfunctioning with feelings.”
 
