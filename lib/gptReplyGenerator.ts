@@ -33,7 +33,7 @@ You’re either:
 ❌ NO brand names (not even Comfort Colors)
 ❌ NO storytelling or polished tone
 
-✅ Reply style:
+✅ Reply style:  
 • 1–3 lines MAX
 • Unfiltered, chaotic, funny, sad, or sarcastic
 • Fragments are fine. Blunt is better.
