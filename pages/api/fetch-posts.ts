@@ -50,18 +50,41 @@ export default async function handler(
   try {
     console.log("[fetch-posts] Starting fetchAndProcessPosts");
     const result = await fetchAndProcessPosts();
-    // Save posts to DB
-    if (result && result.topRanked) {
+    // Generate a new batch_id (timestamp)
+    const batchId = Date.now().toString();
+    // Get all existing post URLs
+    const { data: existingPosts, error: fetchError } = await supabase
+      .from("reddit_posts")
+      .select("url");
+    if (fetchError)
+      throw new Error("Failed to fetch existing posts: " + fetchError.message);
+    const existingUrls = new Set((existingPosts || []).map((p: any) => p.url));
+    // Filter out posts with URLs already in the DB
+    const newPosts = (result.topRanked || []).filter(
+      (post: any) => !existingUrls.has(post.url)
+    );
+    // Add batch_id to each new post
+    const postsToInsert = newPosts.map((post: any) => ({
+      ...post,
+      batch_id: batchId,
+    }));
+    // Insert new posts for this batch
+    if (postsToInsert.length > 0) {
       const { error } = await supabase
         .from("reddit_posts")
-        .insert(result.topRanked);
+        .insert(postsToInsert);
       if (error)
         throw new Error("Failed to save posts to DB: " + error.message);
     }
-    console.log("[fetch-posts] Success, result:", result);
+    console.log("[fetch-posts] Success, result:", {
+      ...result,
+      inserted: postsToInsert.length,
+    });
     res.status(200).json({
       message: "Posts pulled, filtered, ranked, and saved successfully",
       ...result,
+      inserted: postsToInsert.length,
+      batch_id: batchId,
     });
   } catch (error) {
     logger.error("Reddit API error", error);
@@ -71,7 +94,6 @@ export default async function handler(
         error instanceof Error ? error.message : "An unknown error occurred",
     });
   }
-  // Defensive: ensure response is always sent
   if (!res.writableEnded) {
     console.error("[fetch-posts] No response sent, sending fallback 500");
     res.status(500).json({ error: "No response sent from handler" });

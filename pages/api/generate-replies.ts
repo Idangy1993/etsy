@@ -9,10 +9,24 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    // Fetch posts from DB
+    // Get the latest batch_id
+    const { data: latestBatch, error: batchError } = await supabase
+      .from("reddit_posts")
+      .select("batch_id")
+      .order("batch_id", { ascending: false })
+      .limit(1);
+    if (batchError) throw batchError;
+    const latestBatchId = latestBatch?.[0]?.batch_id;
+    if (!latestBatchId) {
+      return res
+        .status(200)
+        .json({ message: "No posts to generate replies for", count: 0 });
+    }
+    // Fetch posts from the latest batch
     const { data: posts, error } = await supabase
       .from("reddit_posts")
-      .select("*");
+      .select("*")
+      .eq("batch_id", latestBatchId);
     if (error) throw error;
     if (!posts || posts.length === 0) {
       return res
